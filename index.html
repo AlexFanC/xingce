@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>行测刷题记录</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0eb;
+    --bg2: #ede7df;
+    --card: #ffffff;
+    --navy: #1a2540;
+    --navy2: #2d3f6e;
+    --accent: #c0713c;
+    --accent2: #e8956a;
+    --green: #3a7d5c;
+    --green-light: #e8f5ef;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --text: #1a2540;
+    --text2: #5a6380;
+    --border: #ddd5c8;
+    --shadow: 0 2px 16px rgba(26,37,64,0.08);
+    --shadow-lg: 0 8px 32px rgba(26,37,64,0.12);
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Noto Serif SC', serif; }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    padding: 52px 20px 20px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner { max-width: 480px; margin: 0 auto; }
+  .header h1 { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
+  .header p { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+  /* NAV TABS */
+  .nav { background: var(--navy); border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 92px; z-index: 99; }
+  .nav-inner { max-width: 480px; margin: 0 auto; display: flex; }
+  .nav-btn { flex: 1; padding: 12px 0; border: none; background: none; color: rgba(255,255,255,0.4); font-family: 'Noto Serif SC', serif; font-size: 13px; cursor: pointer; position: relative; transition: color 0.2s; }
+  .nav-btn.active { color: #fff; }
+  .nav-btn.active::after { content:''; position:absolute; bottom:0; left:20%; right:20%; height:2px; background: var(--accent2); border-radius: 2px; }
+
+  /* MAIN CONTENT */
+  .main { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
+  .page { display: none; }
+  .page.active { display: block; }
+  @media (max-width: 480px) {
+    .main { padding: 16px 12px 100px; }
+  }
+
+  /* SECTION LABELS */
+  .section-label {
+    font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: 0.12em;
+    color: var(--text2); text-transform: uppercase; margin: 24px 0 10px;
+  }
+  .section-label:first-child { margin-top: 4px; }
+
+  /* INPUT CARD */
+  .input-card {
+    background: var(--card); 
+    border-radius: var(--radius); 
+    padding: 18px 16px;
+    box-shadow: var(--shadow); 
+    border: 1px solid var(--border); 
+    margin-bottom: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .input-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(26, 37, 64, 0.12);
+  }
+  .type-header { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    margin-bottom: 16px; 
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--bg2);
+  }
+  .type-name { 
+    font-size: 16px; 
+    font-weight: 700; 
+    color: var(--navy); 
+    letter-spacing: 0.02em;
+  }
+  .type-badge { 
+    font-size: 10px; 
+    font-family: 'DM Mono', monospace; 
+    padding: 4px 10px; 
+    border-radius: 20px; 
+    background: linear-gradient(135deg, var(--bg2), #e6dfd5); 
+    color: var(--text2); 
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .fields-row { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 14px; 
+  }
+  .field { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; 
+  }
+  .field label { 
+    font-size: 11px; 
+    color: var(--text2); 
+    font-family: 'DM Mono', monospace; 
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+  .field input {
+    border: 2px solid var(--border); 
+    border-radius: 12px; 
+    padding: 12px 14px;
+    font-size: 18px; 
+    font-family: 'DM Mono', monospace; 
+    font-weight: 600;
+    color: var(--navy); 
+    background: var(--bg); 
+    text-align: center; 
+    outline: none;
+    transition: all 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+  .field input:focus { 
+    border-color: var(--accent); 
+    background: #fff; 
+    box-shadow: 0 0 0 3px rgba(192, 113, 60, 0.1);
+  }
+  .field input::-webkit-inner-spin-button,
+  .field input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .field input[type=number] {
+    -moz-appearance: textfield;
+  }
+  @media (max-width: 480px) {
+    .input-card {
+      padding: 16px 14px;
+    }
+    .fields-row {
+      gap: 10px;
+    }
+    .field input {
+      padding: 10px 12px;
+      font-size: 16px;
+    }
+  }
+
+  /* SUBMIT BTN */
+  .submit-btn {
+    width: 100%; 
+    padding: 18px; 
+    background: linear-gradient(135deg, var(--navy), var(--navy2)); 
+    color: #fff; 
+    border: none;
+    border-radius: var(--radius); 
+    font-family: 'Noto Serif SC', serif; 
+    font-size: 16px;
+    font-weight: 700; 
+    cursor: pointer; 
+    margin-top: 24px; 
+    letter-spacing: 0.04em;
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 20px rgba(26, 37, 64, 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.7s ease;
+  }
+  .submit-btn:hover::before {
+    left: 100%;
+  }
+  .submit-btn:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 24px rgba(26, 37, 64, 0.3);
+  }
+  .submit-btn:active { 
+    transform: translateY(0); 
+    box-shadow: 0 2px 12px rgba(26, 37, 64, 0.2);
+  }
+  @media (max-width: 480px) {
+    .submit-btn {
+      padding: 16px;
+      font-size: 15px;
+    }
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--navy); color: #fff; padding: 10px 22px; border-radius: 30px;
+    font-size: 13px; z-index: 999; opacity: 0; transition: all 0.3s; pointer-events: none;
+    white-space: nowrap; box-shadow: var(--shadow-lg);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* STATS PAGE */
+  .period-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .period-btn {
+    flex: 1; padding: 9px; border: 1.5px solid var(--border); background: var(--card);
+    border-radius: 10px; font-family: 'Noto Serif SC', serif; font-size: 13px;
+    color: var(--text2); cursor: pointer; transition: all 0.2s;
+  }
+  .period-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+  /* SUMMARY CARDS */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .summary-card {
+    background: var(--card); border-radius: 14px; padding: 14px 10px;
+    text-align: center; box-shadow: var(--shadow); border: 1px solid var(--border);
+  }
+  .summary-card .val { font-size: 26px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--navy); }
+  .summary-card .lbl { font-size: 10px; color: var(--text2); margin-top: 3px; font-family: 'DM Mono', monospace; }
+  .summary-card.accent .val { color: var(--red); }
+  .summary-card.green .val { color: var(--green); }
+
+  /* TYPE STAT ROWS */
+  .stat-section { margin-bottom: 24px; }
+  .stat-section-title {
+    font-size: 13px; font-weight: 600; color: var(--navy2);
+    padding: 8px 12px; background: var(--bg2); border-radius: 8px; margin-bottom: 8px;
+  }
+  .stat-row {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow);
+  }
+  .stat-row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .stat-type { font-size: 14px; font-weight: 600; color: var(--navy); }
+  .stat-nums { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); }
+  .stat-nums span { color: var(--red); font-weight: 500; }
+  .bar-bg { height: 6px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+
+  /* RECORDS PAGE */
+  .records-filter { 
+    display: flex; 
+    gap: 6px; 
+    margin-bottom: 16px; 
+    overflow-x: auto; 
+    padding: 12px 0 16px;
+    margin-left: -4px;
+    margin-right: -4px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .records-filter::-webkit-scrollbar { display: none; }
+  .filter-btn {
+    white-space: nowrap; 
+    padding: 8px 12px; 
+    border: 1.5px solid var(--border);
+    background: var(--card); 
+    border-radius: 20px; 
+    font-family: 'Noto Serif SC', serif;
+    font-size: 11px; 
+    color: var(--text2); 
+    cursor: pointer; 
+    transition: all 0.2s; 
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+  }
+  .filter-btn.active { 
+    background: var(--navy); 
+    color: #fff; 
+    border-color: var(--navy); 
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(26, 37, 64, 0.15);
+  }
+  @media (max-width: 480px) {
+    .filter-btn {
+      padding: 7px 10px;
+      font-size: 10px;
+    }
+  }
+
+  .record-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 13px 14px; margin-bottom: 10px; box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 12px; animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .record-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .record-body { flex: 1; min-width: 0; }
+  .record-type { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .record-meta { font-size: 11px; color: var(--text2); margin-top: 2px; font-family: 'DM Mono', monospace; }
+  .record-stats { text-align: right; flex-shrink: 0; }
+  .record-total { font-size: 18px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--navy); }
+  .record-wrong { font-size: 11px; color: var(--red); font-family: 'DM Mono', monospace; }
+  .delete-btn {
+    width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: #fff; color: #ccc; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 14px; transition: all 0.2s; flex-shrink: 0;
+  }
+  .delete-btn:hover { background: var(--red-light); border-color: var(--red); color: var(--red); }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 60px 20px; color: var(--text2); }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty p { font-size: 14px; line-height: 1.6; }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 40px; color: var(--text2); font-size: 13px; font-family: 'DM Mono', monospace; }
+
+  /* CATEGORY ICONS */
+  .cat-1 { background: #eef2ff; }
+  .cat-2 { background: #fef3e8; }
+  .cat-3 { background: #e8f5ef; }
+  .cat-4 { background: #f3e8ff; }
+
+  /* Confirm overlay */
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; display:flex; align-items:flex-end; justify-content:center; }
+  .confirm-sheet { background:#fff; border-radius:20px 20px 0 0; padding:24px 20px; width:100%; max-width:480px; }
+  .confirm-sheet h3 { font-size:17px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+  .confirm-sheet p { font-size:13px; color:var(--text2); margin-bottom:20px; }
+  .confirm-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .btn-cancel { padding:13px; border:1.5px solid var(--border); background:#fff; border-radius:12px; font-family:'Noto Serif SC',serif; font-size:14px; color:var(--text2); cursor:pointer; }
+  .btn-delete { padding:13px; border:none; background:var(--red); border-radius:12px; font-family:'Noto Serif SC',serif; font-size:14px; color:#fff; cursor:pointer; font-weight:600; }
+
+  .date-label { font-size:11px; color:var(--text2); font-family:'DM Mono',monospace; text-align:center; margin:16px 0 8px; }
+  .date-label:first-child { margin-top:0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>行测刷题记录</h1>
+    <p id="todayDate">加载中…</p>
+  </div>
+</div>
+
+  <div class="nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="switchPage('input')">录入</button>
+    <button class="nav-btn" onclick="switchPage('stats')">统计</button>
+    <button class="nav-btn" onclick="switchPage('records')">记录</button>
+    <button class="nav-btn" onclick="switchPage('goals')">目标</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- INPUT PAGE -->
+  <div class="page active" id="page-input">
+    <div class="section-label">言语理解与表达</div>
+    <div class="input-card" id="card-逻辑填空">
+      <div class="type-header"><span class="type-name">逻辑填空</span><span class="type-badge">言语</span></div>
+      <div class="fields-row">
+        <div class="field"><label>做题数量</label><input type="number" min="0" placeholder="0" id="total-逻辑填空"></div>
+        <div class="field"><label>错题数量</label><input type="number" min="0" placeholder="0" id="wrong-逻辑填空"></div>
+      </div>
+    </div>
+    <div class="input-card" id="card-片段阅读">
+      <div class="type-header"><span class="type-name">片段阅读</span><span class="type-badge">言语</span></div>
+      <div class="fields-row">
+        <div class="field"><label>做题数量</label><input type="number" min="0" placeholder="0" id="total-片段阅读"></div>
+        <div class="field"><label>错题数量</label><input type="number" min="0" placeholder="0" id="wrong-片段阅读"></div>
+      </div>
+    </div>
+    <div class="input-card" id="card-语句表达">
+      <div class="type-header"><span class="type-name">语句表达</span><span class="type-badge">言语</span></div>
+      <div class="fields-row">
+        <div class="field"><label>做题数量</label><input type="number" min="0" placeholder="0" id="total-语句表达"></div>
+        <div class="field"><label>错题数量</label><input type="number" min="0" placeholder="0" id="wrong-语句表达"></div>
+      </div>
+    </div>
+
+    <div class="section-label">判断推理</div>
+    <div class="input-card" id="card-图形推理">
+      <div class="type-header"><span class="type-name">图形推理</span><span class="type-badge">判断</span></div>
+      <div class="fields-row">
+        <div class="field"><label>做题数量</label><input type="number" min="0" placeholder="0" id="total-图形推理"></div>
+        <div class="field"><label>错题数量</label><input type="number" min="0" placeholder="0" id="wrong-图形推理"></div>
+      </div>
+    </div>
+    <div class="input-card" id="card-定义判断">
+      <div class="type-header"><span class="type-name">定义判断</span><span class="type-badge">判断</span></div>
+      <div class="fields-row">
+        <div class="field"><label>做题数量</label><input type="number" min="0" placeholder="0" id="total-定义判断"></div>
+        <div class="field"><label>错题数量</label><input type="number" min="0" placeholder="0" id="wrong-定义判断"></div>
+      </div>
+    </div>
+    <div class="input-card" id="card-类比推理">
+      <div class="type-header"><span class="type-name">类比推理</span><span class="type-badge">判断</span></div>
+      <div class="fields-row">
+        <div class="field"><label>做题数量</label><input type="number" min="0" placeholder="0" id="total-类比推理"></div>
+        <div class="field"><label>错题数量</label><input type="number" min="0" placeholder="0" id="wrong-类比推理"></div>
+      </div>
+    </div>
+    <div class="input-card" id="card-逻辑判断">
+      <div class="type-header"><span class="type-name">逻辑判断</span><span class="type-badge">判断</span></div>
+      <div class="fields-row">
+        <div class="field"><label>做题数量</label><input type="number" min="0" placeholder="0" id="total-逻辑判断"></div>
+        <div class="field"><label>错题数量</label><input type="number" min="0" placeholder="0" id="wrong-逻辑判断"></div>
+      </div>
+    </div>
+
+    <div class="section-label">资料分析</div>
+    <div class="input-card" id="card-资料分析">
+      <div class="type-header"><span class="type-name">资料分析</span><span class="type-badge">资料</span></div>
+      <div class="fields-row">
+        <div class="field"><label>做题数量</label><input type="number" min="0" placeholder="0" id="total-资料分析"></div>
+        <div class="field"><label>错题数量</label><input type="number" min="0" placeholder="0" id="wrong-资料分析"></div>
+      </div>
+    </div>
+
+    <div class="section-label">行测综合</div>
+    <div class="input-card" id="card-行测综合">
+      <div class="type-header"><span class="type-name">行测综合</span><span class="type-badge">综合</span></div>
+      <div class="fields-row">
+        <div class="field"><label>做题数量</label><input type="number" min="0" placeholder="0" id="total-行测综合"></div>
+        <div class="field"><label>错题数量</label><input type="number" min="0" placeholder="0" id="wrong-行测综合"></div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitRecord()">📝 保存本次记录</button>
+  </div>
+
+  <!-- STATS PAGE -->
+  <div class="page" id="page-stats">
+    <div class="period-tabs">
+      <button class="period-btn active" onclick="setPeriod('day')">今日</button>
+      <button class="period-btn" onclick="setPeriod('week')">本周</button>
+      <button class="period-btn" onclick="setPeriod('month')">本月</button>
+    </div>
+    <div id="statsContent"><div class="loading">加载统计中…</div></div>
+  </div>
+
+  <!-- RECORDS PAGE -->
+  <div class="page" id="page-records">
+    <div class="records-filter" id="filterRow">
+      <button class="filter-btn active" onclick="setFilter('all')">全部</button>
+      <button class="filter-btn" onclick="setFilter('逻辑填空')">逻辑填空</button>
+      <button class="filter-btn" onclick="setFilter('片段阅读')">片段阅读</button>
+      <button class="filter-btn" onclick="setFilter('语句表达')">语句表达</button>
+      <button class="filter-btn" onclick="setFilter('图形推理')">图形推理</button>
+      <button class="filter-btn" onclick="setFilter('定义判断')">定义判断</button>
+      <button class="filter-btn" onclick="setFilter('类比推理')">类比推理</button>
+      <button class="filter-btn" onclick="setFilter('逻辑判断')">逻辑判断</button>
+      <button class="filter-btn" onclick="setFilter('资料分析')">资料分析</button>
+      <button class="filter-btn" onclick="setFilter('行测综合')">行测综合</button>
+    </div>
+    <div id="recordsList"><div class="loading">加载记录中…</div></div>
+  </div>
+
+  <!-- GOALS PAGE -->
+  <div class="page" id="page-goals">
+    <div class="section-label">每日目标设置</div>
+    <div class="input-card">
+      <div class="type-header"><span class="type-name">每日目标</span><span class="type-badge">设置</span></div>
+      <div class="fields-row">
+        <div class="field"><label>逻辑填空</label><input type="number" min="0" placeholder="0" id="goal-逻辑填空"></div>
+        <div class="field"><label>片段阅读</label><input type="number" min="0" placeholder="0" id="goal-片段阅读"></div>
+      </div>
+      <div class="fields-row">
+        <div class="field"><label>语句表达</label><input type="number" min="0" placeholder="0" id="goal-语句表达"></div>
+        <div class="field"><label>图形推理</label><input type="number" min="0" placeholder="0" id="goal-图形推理"></div>
+      </div>
+      <div class="fields-row">
+        <div class="field"><label>定义判断</label><input type="number" min="0" placeholder="0" id="goal-定义判断"></div>
+        <div class="field"><label>类比推理</label><input type="number" min="0" placeholder="0" id="goal-类比推理"></div>
+      </div>
+      <div class="fields-row">
+        <div class="field"><label>逻辑判断</label><input type="number" min="0" placeholder="0" id="goal-逻辑判断"></div>
+        <div class="field"><label>资料分析</label><input type="number" min="0" placeholder="0" id="goal-资料分析"></div>
+      </div>
+      <div class="fields-row">
+        <div class="field"><label>行测综合</label><input type="number" min="0" placeholder="0" id="goal-行测综合"></div>
+        <div class="field" style="visibility: hidden;"><label></label><input type="number" placeholder="0"></div>
+      </div>
+    </div>
+    
+    <div class="section-label">今日完成情况</div>
+    <div id="goalsProgress"><div class="loading">加载目标进度中…</div></div>
+    
+    <button class="submit-btn" onclick="saveGoals()">💾 保存每日目标</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Confirm Delete Sheet -->
+<div class="overlay" id="confirmOverlay" style="display:none" onclick="closeConfirm(event)">
+  <div class="confirm-sheet">
+    <h3>删除记录</h3>
+    <p>确认删除这条记录吗？此操作不可撤销。</p>
+    <div class="confirm-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">取消</button>
+      <button class="btn-delete" onclick="confirmDelete()">删除</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove, query, orderByChild, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBEzro3uF4BWUSuXEAJHn5kq-NQYFwnkhk",
+  authDomain: "xingce-3f326.firebaseapp.com",
+  databaseURL: "https://xingce-3f326-default-rtdb.firebaseio.com",
+  projectId: "xingce-3f326",
+  storageBucket: "xingce-3f326.firebasestorage.app",
+  messagingSenderId: "883665828231",
+  appId: "1:883665828231:web:1bace64c6c805e4ecd3b22",
+  measurementId: "G-L9BXL72G9W"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const recordsRef = ref(db, 'xingce_records');
+const goalsRef = ref(db, 'xingce_goals');
+
+const TYPES = {
+  '逻辑填空': { cat: '言语理解与表达', icon: '📖', color: 'cat-1' },
+  '片段阅读': { cat: '言语理解与表达', icon: '🔍', color: 'cat-1' },
+  '语句表达': { cat: '言语理解与表达', icon: '✍️', color: 'cat-1' },
+  '图形推理': { cat: '判断推理', icon: '🔷', color: 'cat-2' },
+  '定义判断': { cat: '判断推理', icon: '📌', color: 'cat-2' },
+  '类比推理': { cat: '判断推理', icon: '🔗', color: 'cat-2' },
+  '逻辑判断': { cat: '判断推理', icon: '🧩', color: 'cat-2' },
+  '资料分析': { cat: '资料分析', icon: '📊', color: 'cat-3' },
+  '行测综合': { cat: '行测综合', icon: '🎯', color: 'cat-4' },
+};
+
+let allRecords = [];
+let goals = {};
+let currentPeriod = 'day';
+let currentFilter = 'all';
+let deleteTarget = null;
+
+// Today's date
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function getDateStr(ts) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function formatDate(ts) {
+  const d = new Date(ts);
+  return `${d.getMonth()+1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+document.getElementById('todayDate').textContent = getTodayStr();
+
+// Listen to Firebase for records
+onValue(query(recordsRef, orderByChild('timestamp')), (snap) => {
+  allRecords = [];
+  const data = snap.val();
+  if (data) {
+    Object.entries(data).forEach(([key, val]) => {
+      allRecords.push({ key, ...val });
+    });
+    allRecords.sort((a, b) => b.timestamp - a.timestamp);
+  }
+  renderStats();
+  renderRecords();
+  renderGoalsProgress();
+});
+
+// Listen to Firebase for goals
+onValue(goalsRef, (snap) => {
+  goals = snap.val() || {};
+  // Update goal input fields
+  Object.keys(TYPES).forEach(type => {
+    const input = document.getElementById('goal-' + type);
+    if (input && goals[type] !== undefined) {
+      input.value = goals[type];
+    }
+  });
+  renderGoalsProgress();
+});
+
+// SUBMIT
+window.submitRecord = function() {
+  const types = Object.keys(TYPES);
+  let saved = 0;
+  const promises = [];
+  const today = getTodayStr();
+  const now = Date.now();
+
+  types.forEach(type => {
+    const total = parseInt(document.getElementById('total-' + type).value) || 0;
+    const wrong = parseInt(document.getElementById('wrong-' + type).value) || 0;
+    if (total > 0) {
+      const clampedWrong = Math.min(wrong, total);
+      promises.push(push(recordsRef, {
+        type,
+        category: TYPES[type].cat,
+        total,
+        wrong: clampedWrong,
+        date: today,
+        timestamp: now + saved,
+      }));
+      saved++;
+    }
+  });
+
+  if (saved === 0) { showToast('请至少输入一个题型的数量'); return; }
+
+  Promise.all(promises).then(() => {
+    types.forEach(t => {
+      document.getElementById('total-' + t).value = '';
+      document.getElementById('wrong-' + t).value = '';
+    });
+    showToast(`✅ 已保存 ${saved} 条记录`);
+  }).catch(() => showToast('保存失败，请重试'));
+};
+
+// STATS
+window.setPeriod = function(p) {
+  currentPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderStats();
+};
+
+function getFilteredByPeriod(period) {
+  const now = new Date();
+  const today = getTodayStr();
+  return allRecords.filter(r => {
+    if (period === 'day') return r.date === today;
+    if (period === 'week') {
+      const d = new Date(r.timestamp);
+      const dayOfWeek = now.getDay() || 7;
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - dayOfWeek + 1);
+      weekStart.setHours(0,0,0,0);
+      return d >= weekStart;
+    }
+    if (period === 'month') {
+      const d = new Date(r.timestamp);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }
+    return true;
+  });
+}
+
+function renderStats() {
+  const filtered = getFilteredByPeriod(currentPeriod);
+  const container = document.getElementById('statsContent');
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><p>暂无${currentPeriod==='day'?'今日':currentPeriod==='week'?'本周':'本月'}数据<br>去录入页面添加练习记录吧</p></div>`;
+    return;
+  }
+
+  let totalQ = 0, totalW = 0;
+  const typeMap = {};
+  Object.keys(TYPES).forEach(t => typeMap[t] = { total: 0, wrong: 0 });
+
+  filtered.forEach(r => {
+    totalQ += r.total;
+    totalW += r.wrong;
+    if (typeMap[r.type]) { typeMap[r.type].total += r.total; typeMap[r.type].wrong += r.wrong; }
+  });
+
+  const acc = totalQ > 0 ? (((totalQ - totalW) / totalQ) * 100).toFixed(1) : '–';
+
+  let html = `
+    <div class="summary-grid">
+      <div class="summary-card"><div class="val">${totalQ}</div><div class="lbl">总题数</div></div>
+      <div class="summary-card accent"><div class="val">${totalW}</div><div class="lbl">错题数</div></div>
+      <div class="summary-card green"><div class="val">${acc}${totalQ>0?'%':''}</div><div class="lbl">正确率</div></div>
+    </div>`;
+
+  // Add simple chart for weekly/monthly trends
+  if (currentPeriod !== 'day') {
+    // Group by date for the chart
+    const dateMap = {};
+    filtered.forEach(r => {
+      const dateStr = getDateStr(r.timestamp);
+      if (!dateMap[dateStr]) {
+        dateMap[dateStr] = { total: 0, wrong: 0 };
+      }
+      dateMap[dateStr].total += r.total;
+      dateMap[dateStr].wrong += r.wrong;
+    });
+    
+    // Sort dates
+    const sortedDates = Object.keys(dateMap).sort();
+    
+    if (sortedDates.length > 1) {
+      // Calculate daily totals for chart
+      const chartData = sortedDates.map(date => {
+        const d = dateMap[date];
+        return {
+          date,
+          total: d.total,
+          correct: d.total - d.wrong,
+          accuracy: d.total > 0 ? ((d.total - d.wrong) / d.total * 100).toFixed(0) : 0
+        };
+      });
+      
+      // Find max for scaling
+      const maxTotal = Math.max(...chartData.map(d => d.total), 1);
+      
+      html += `
+        <div class="stat-section">
+          <div class="stat-section-title">${currentPeriod === 'week' ? '本周' : '本月'}趋势</div>
+          <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow);">
+            <div style="display: flex; align-items: flex-end; height: 120px; gap: 4px; margin-bottom: 12px; padding: 0 8px;">
+      `;
+      
+      chartData.forEach((d, i) => {
+        const height = (d.total / maxTotal) * 80;
+        const dateLabel = d.date === getTodayStr() ? '今天' : d.date.split('-').slice(1).join('-');
+        html += `
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+            <div style="width: 100%; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end;">
+              <div style="width: 80%; background: linear-gradient(to top, #3a7d5c, #4caf7d); height: ${height}px; border-radius: 4px 4px 0 0; position: relative;">
+                <div style="position: absolute; top: -20px; left: 0; right: 0; text-align: center; font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text2);">${d.total}</div>
+              </div>
+            </div>
+            <div style="font-size: 9px; font-family: 'DM Mono', monospace; color: var(--text2); margin-top: 6px; text-align: center;">${dateLabel}</div>
+            <div style="font-size: 8px; font-family: 'DM Mono', monospace; color: #3a7d5c; margin-top: 2px; font-weight: 600;">${d.accuracy}%</div>
+          </div>
+        `;
+      });
+      
+      html += `
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text2); font-family: 'DM Mono', monospace;">
+              <div>📈 共 ${sortedDates.length} 天</div>
+              <div>📊 日均 ${Math.round(totalQ / sortedDates.length)} 题</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Add type-specific summary for weekly/monthly
+    html += `
+      <div class="stat-section">
+        <div class="stat-section-title">${currentPeriod === 'week' ? '本周' : '本月'}各题型统计</div>
+    `;
+    
+    // Calculate type totals for the period
+    const typeTotals = {};
+    Object.keys(TYPES).forEach(t => typeTotals[t] = { total: 0, wrong: 0 });
+    
+    filtered.forEach(r => {
+      if (typeTotals[r.type]) {
+        typeTotals[r.type].total += r.total;
+        typeTotals[r.type].wrong += r.wrong;
+      }
+    });
+    
+    // Sort types by total (descending)
+    const sortedTypes = Object.keys(typeTotals).filter(t => typeTotals[t].total > 0)
+      .sort((a, b) => typeTotals[b].total - typeTotals[a].total);
+    
+    if (sortedTypes.length > 0) {
+      sortedTypes.forEach(type => {
+        const d = typeTotals[type];
+        const rate = d.total > 0 ? ((d.total - d.wrong) / d.total * 100).toFixed(1) : 0;
+        const pct = d.total > 0 ? ((d.total - d.wrong) / d.total * 100) : 0;
+        const barColor = pct >= 80 ? '#3a7d5c' : pct >= 60 ? '#c0713c' : '#c0392b';
+        
+        html += `
+          <div class="stat-row">
+            <div class="stat-row-top">
+              <span class="stat-type">${TYPES[type].icon} ${type}</span>
+              <span class="stat-nums">${d.total}题 / 错<span>${d.wrong}</span></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+              <span style="font-size:12px;font-family:'DM Mono',monospace;color:${barColor};font-weight:600;width:42px;text-align:right">${rate}%</span>
+            </div>
+          </div>`;
+      });
+    } else {
+      html += `<div style="text-align: center; padding: 20px; color: var(--text2); font-size: 13px;">暂无${currentPeriod === 'week' ? '本周' : '本月'}各题型数据</div>`;
+    }
+    
+    html += '</div>';
+  }
+
+  // Group by category
+  const cats = {
+    '言语理解与表达': ['逻辑填空','片段阅读','语句表达'],
+    '判断推理': ['图形推理','定义判断','类比推理','逻辑判断'],
+    '资料分析': ['资料分析'],
+    '行测综合': ['行测综合']
+  };
+
+  Object.entries(cats).forEach(([cat, types]) => {
+    const hasData = types.some(t => typeMap[t].total > 0);
+    if (!hasData) return;
+    html += `<div class="stat-section"><div class="stat-section-title">${cat}</div>`;
+    types.forEach(type => {
+      const d = typeMap[type];
+      if (d.total === 0) return;
+      const rate = ((d.total - d.wrong) / d.total * 100).toFixed(1);
+      const pct = (d.total - d.wrong) / d.total * 100;
+      const barColor = pct >= 80 ? '#3a7d5c' : pct >= 60 ? '#c0713c' : '#c0392b';
+      html += `
+        <div class="stat-row">
+          <div class="stat-row-top">
+            <span class="stat-type">${TYPES[type].icon} ${type}</span>
+            <span class="stat-nums">${d.total}题 / 错<span>${d.wrong}</span></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+            <span style="font-size:12px;font-family:'DM Mono',monospace;color:${barColor};font-weight:600;width:42px;text-align:right">${rate}%</span>
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+// RECORDS
+window.setFilter = function(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderRecords();
+};
+
+function renderRecords() {
+  const container = document.getElementById('recordsList');
+  let filtered = currentFilter === 'all' ? allRecords : allRecords.filter(r => r.type === currentFilter);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><p>暂无记录</p></div>`;
+    return;
+  }
+
+  let html = '';
+  let lastDate = null;
+  filtered.forEach(r => {
+    const dateStr = getDateStr(r.timestamp);
+    if (dateStr !== lastDate) {
+      const label = dateStr === getTodayStr() ? '今天' : dateStr;
+      html += `<div class="date-label">${label}</div>`;
+      lastDate = dateStr;
+    }
+    const info = TYPES[r.type] || { icon: '📝', color: 'cat-1' };
+    const rate = r.total > 0 ? ((r.total-r.wrong)/r.total*100).toFixed(0) : 0;
+    html += `
+      <div class="record-card">
+        <div class="record-icon ${info.color}">${info.icon}</div>
+        <div class="record-body">
+          <div class="record-type">${r.type}</div>
+          <div class="record-meta">${formatDate(r.timestamp)} · 正确率 ${rate}%</div>
+        </div>
+        <div class="record-stats">
+          <div class="record-total">${r.total}</div>
+          <div class="record-wrong">错 ${r.wrong}</div>
+        </div>
+        <button class="delete-btn" onclick="window.askDelete('${r.key}')">✕</button>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+window.askDelete = function(key) {
+  deleteTarget = key;
+  document.getElementById('confirmOverlay').style.display = 'flex';
+};
+window.closeConfirm = function(e) {
+  if (!e || e.target === document.getElementById('confirmOverlay')) {
+    document.getElementById('confirmOverlay').style.display = 'none';
+    deleteTarget = null;
+  }
+};
+window.confirmDelete = function() {
+  if (!deleteTarget) return;
+  remove(ref(db, 'xingce_records/' + deleteTarget))
+    .then(() => showToast('🗑️ 已删除'))
+    .catch(() => showToast('删除失败'));
+  document.getElementById('confirmOverlay').style.display = 'none';
+  deleteTarget = null;
+};
+
+// GOALS
+window.saveGoals = function() {
+  const newGoals = {};
+  let hasGoals = false;
+  
+  Object.keys(TYPES).forEach(type => {
+    const value = parseInt(document.getElementById('goal-' + type).value) || 0;
+    if (value > 0) {
+      newGoals[type] = value;
+      hasGoals = true;
+    }
+  });
+  
+  if (!hasGoals) {
+    showToast('请至少设置一个目标数量');
+    return;
+  }
+  
+  // Save to Firebase
+  set(goalsRef, newGoals)
+    .then(() => showToast('✅ 每日目标已保存'))
+    .catch(() => showToast('保存失败，请重试'));
+};
+
+function renderGoalsProgress() {
+  const container = document.getElementById('goalsProgress');
+  if (!container) return;
+  
+  // Get today's records
+  const todayRecords = allRecords.filter(r => r.date === getTodayStr());
+  const typeMap = {};
+  Object.keys(TYPES).forEach(t => typeMap[t] = { total: 0, wrong: 0 });
+  
+  todayRecords.forEach(r => {
+    if (typeMap[r.type]) {
+      typeMap[r.type].total += r.total;
+      typeMap[r.type].wrong += r.wrong;
+    }
+  });
+  
+  // Check if we have any goals
+  const hasGoals = Object.keys(goals).length > 0;
+  if (!hasGoals) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">🎯</div><p>尚未设置每日目标<br>请在上方设置您的每日练习目标</p></div>`;
+    return;
+  }
+  
+  let html = '';
+  let allCompleted = true;
+  let totalGoals = 0;
+  let totalCompleted = 0;
+  
+  Object.keys(TYPES).forEach(type => {
+    const goal = goals[type] || 0;
+    if (goal === 0) return;
+    
+    totalGoals++;
+    const completed = typeMap[type].total || 0;
+    const progress = Math.min(completed / goal * 100, 100);
+    const isCompleted = completed >= goal;
+    
+    if (isCompleted) {
+      totalCompleted++;
+    } else {
+      allCompleted = false;
+    }
+    
+    const progressColor = isCompleted ? '#3a7d5c' : progress >= 50 ? '#c0713c' : '#c0392b';
+    const statusIcon = isCompleted ? '✅' : progress > 0 ? '⏳' : '⭕';
+    
+    html += `
+      <div class="stat-row">
+        <div class="stat-row-top">
+          <span class="stat-type">${TYPES[type].icon} ${type}</span>
+          <span class="stat-nums">${completed}/${goal}题 ${isCompleted ? '<span style="color:#3a7d5c">✓</span>' : ''}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:${progress}%;background:${progressColor}"></div></div>
+          <span style="font-size:12px;font-family:'DM Mono',monospace;color:${progressColor};font-weight:600;width:42px;text-align:right">${Math.round(progress)}%</span>
+        </div>
+      </div>`;
+  });
+  
+  if (html === '') {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">🎯</div><p>尚未设置每日目标<br>请在上方设置您的每日练习目标</p></div>`;
+    return;
+  }
+  
+  // Add completion summary
+  const completionRate = totalGoals > 0 ? Math.round(totalCompleted / totalGoals * 100) : 0;
+  const summaryHtml = `
+    <div class="summary-grid" style="margin-bottom: 20px;">
+      <div class="summary-card"><div class="val">${totalGoals}</div><div class="lbl">目标总数</div></div>
+      <div class="summary-card ${allCompleted ? 'green' : 'accent'}"><div class="val">${totalCompleted}</div><div class="lbl">已完成</div></div>
+      <div class="summary-card ${allCompleted ? 'green' : ''}"><div class="val">${completionRate}%</div><div class="lbl">完成率</div></div>
+    </div>`;
+  
+  // Add "今日已完成" banner if all goals are completed
+  if (allCompleted && totalGoals > 0) {
+    html = `
+      <div style="background: linear-gradient(135deg, #3a7d5c, #4caf7d); color: white; padding: 16px; border-radius: var(--radius); margin-bottom: 16px; text-align: center; box-shadow: 0 4px 20px rgba(58, 125, 92, 0.3);">
+        <div style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">🎉 今日已完成</div>
+        <div style="font-size: 12px; opacity: 0.9;">所有每日目标已完成！继续保持！</div>
+      </div>
+      ${summaryHtml}
+      ${html}`;
+  } else {
+    html = summaryHtml + html;
+  }
+  
+  container.innerHTML = html;
+}
+
+// PAGE SWITCH
+window.switchPage = function(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  event.target.classList.add('active');
+  if (page === 'stats') renderStats();
+  if (page === 'records') renderRecords();
+  if (page === 'goals') renderGoalsProgress();
+};
+
+// TOAST
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
