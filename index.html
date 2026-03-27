@@ -448,11 +448,16 @@
         <div class="field"><label>使用场景</label><input type="text" placeholder="例句或使用场景" id="idiom-context"></div>
       </div>
       <div style="margin-top: 12px;">
-        <label style="font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; font-weight: 500; letter-spacing: 0.08em;">释义（自动获取）</label>
-        <textarea id="idiom-definition" placeholder="点击获取释义..." style="width: 100%; border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; font-size: 14px; font-family: 'Noto Serif SC', serif; color: var(--navy); background: var(--bg); outline: none; transition: all 0.2s; margin-top: 6px; min-height: 80px; resize: vertical;" readonly></textarea>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; font-weight: 500; letter-spacing: 0.08em;">释义（可选）</label>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" onclick="getIdiomDefinition()" style="font-size: 10px; padding: 4px 8px; border: 1px solid var(--border); background: var(--bg); border-radius: 6px; color: var(--text2); cursor: pointer;">📚 获取释义</button>
+            <button type="button" onclick="clearDefinition()" style="font-size: 10px; padding: 4px 8px; border: 1px solid var(--border); background: var(--bg); border-radius: 6px; color: var(--text2); cursor: pointer;">🗑️ 清空</button>
+          </div>
+        </div>
+        <textarea id="idiom-definition" placeholder="可点击获取释义，或手动输入释义..." style="width: 100%; border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; font-size: 14px; font-family: 'Noto Serif SC', serif; color: var(--navy); background: var(--bg); outline: none; transition: all 0.2s; margin-top: 6px; min-height: 80px; resize: vertical;"></textarea>
       </div>
       <div style="display: flex; gap: 10px; margin-top: 16px;">
-        <button class="submit-btn" style="flex: 1; padding: 12px; font-size: 14px;" onclick="getIdiomDefinition()">📚 获取释义</button>
         <button class="submit-btn" style="flex: 1; padding: 12px; font-size: 14px; background: linear-gradient(135deg, var(--green), #4caf7d);" onclick="addIdiom()">💾 保存成语</button>
       </div>
     </div>
@@ -1222,6 +1227,12 @@ window.getIdiomDefinition = async function() {
   }
 };
 
+// Clear definition
+window.clearDefinition = function() {
+  document.getElementById('idiom-definition').value = '';
+  showToast('已清空释义');
+};
+
 // Add new idiom
 window.addIdiom = function() {
   const idiom = document.getElementById('idiom-input').value.trim();
@@ -1233,10 +1244,7 @@ window.addIdiom = function() {
     return;
   }
   
-  if (!definition || definition === '点击获取释义...' || definition === '正在获取释义...') {
-    showToast('请先获取释义');
-    return;
-  }
+  // Definition is now optional, so we don't check for it
   
   const now = Date.now();
   const today = getTodayStr();
@@ -1248,14 +1256,14 @@ window.addIdiom = function() {
     push(idiomsRef, {
       name: idiom,
       context: context || '',
-      definition: definition,
+      definition: definition || '',
       date: today,
       timestamp: now
     }).then(() => {
       // Clear inputs
       document.getElementById('idiom-input').value = '';
       document.getElementById('idiom-context').value = '';
-      document.getElementById('idiom-definition').value = '点击获取释义...';
+      document.getElementById('idiom-definition').value = '';
       
       showToast(`✅ 已保存成语 "${idiom}"`);
     }).catch((error) => {
