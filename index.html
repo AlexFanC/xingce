@@ -443,6 +443,7 @@
       <button class="period-btn active" onclick="setPeriod('day')">今日</button>
       <button class="period-btn" onclick="setPeriod('week')">本周</button>
       <button class="period-btn" onclick="setPeriod('month')">本月</button>
+      <button class="period-btn" onclick="setPeriod('all')">全部</button>
     </div>
     <div id="statsContent"><div class="loading">加载统计中…</div></div>
   </div>
@@ -655,6 +656,7 @@ function getFilteredByPeriod(period) {
       const d = new Date(r.timestamp);
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     }
+    if (period === 'all') return true; // 全部数据
     return true;
   });
 }
@@ -664,7 +666,10 @@ function renderStats() {
   const container = document.getElementById('statsContent');
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><p>暂无${currentPeriod==='day'?'今日':currentPeriod==='week'?'本周':'本月'}数据<br>去录入页面添加练习记录吧</p></div>`;
+    const periodText = currentPeriod === 'day' ? '今日' : 
+                      currentPeriod === 'week' ? '本周' : 
+                      currentPeriod === 'month' ? '本月' : '全部';
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><p>暂无${periodText}数据<br>去录入页面添加练习记录吧</p></div>`;
     return;
   }
 
@@ -687,7 +692,7 @@ function renderStats() {
       <div class="summary-card green"><div class="val">${acc}${totalQ>0?'%':''}</div><div class="lbl">正确率</div></div>
     </div>`;
 
-  // Add simple chart for weekly/monthly trends
+  // Add simple chart for weekly/monthly/all trends
   if (currentPeriod !== 'day') {
     // Group by date for the chart
     const dateMap = {};
@@ -718,16 +723,51 @@ function renderStats() {
       // Find max for scaling
       const maxTotal = Math.max(...chartData.map(d => d.total), 1);
       
+      const periodTitle = currentPeriod === 'week' ? '本周' : 
+                         currentPeriod === 'month' ? '本月' : '全部';
+      
       html += `
         <div class="stat-section">
-          <div class="stat-section-title">${currentPeriod === 'week' ? '本周' : '本月'}趋势</div>
+          <div class="stat-section-title">${periodTitle}趋势</div>
           <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow);">
             <div style="display: flex; align-items: flex-end; height: 120px; gap: 4px; margin-bottom: 12px; padding: 0 8px;">
       `;
       
-      chartData.forEach((d, i) => {
+      // For "all" mode, show fewer data points or aggregate by month
+      let displayData = chartData;
+      if (currentPeriod === 'all' && chartData.length > 30) {
+        // Aggregate by month for "all" mode if too many days
+        const monthMap = {};
+        chartData.forEach(d => {
+          const month = d.date.substring(0, 7); // YYYY-MM
+          if (!monthMap[month]) {
+            monthMap[month] = { total: 0, correct: 0, count: 0 };
+          }
+          monthMap[month].total += d.total;
+          monthMap[month].correct += d.correct;
+          monthMap[month].count += 1;
+        });
+        
+        displayData = Object.keys(monthMap).sort().map(month => {
+          const m = monthMap[month];
+          return {
+            date: month,
+            total: m.total,
+            correct: m.correct,
+            accuracy: m.total > 0 ? ((m.correct) / m.total * 100).toFixed(0) : 0
+          };
+        });
+      }
+      
+      displayData.forEach((d, i) => {
         const height = (d.total / maxTotal) * 80;
-        const dateLabel = d.date === getTodayStr() ? '今天' : d.date.split('-').slice(1).join('-');
+        let dateLabel = d.date;
+        if (currentPeriod === 'all' && d.date.length === 7) {
+          // Show month format for aggregated data
+          dateLabel = d.date.split('-')[1] + '月';
+        } else {
+          dateLabel = d.date === getTodayStr() ? '今天' : d.date.split('-').slice(1).join('-');
+        }
         html += `
           <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
             <div style="width: 100%; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end;">
@@ -741,21 +781,28 @@ function renderStats() {
         `;
       });
       
+      const daysCount = currentPeriod === 'all' ? sortedDates.length : sortedDates.length;
+      const avgPerDay = Math.round(totalQ / daysCount);
+      const periodLabel = currentPeriod === 'all' ? '总天数' : '共';
+      
       html += `
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text2); font-family: 'DM Mono', monospace;">
-              <div>📈 共 ${sortedDates.length} 天</div>
-              <div>📊 日均 ${Math.round(totalQ / sortedDates.length)} 题</div>
+              <div>📈 ${periodLabel} ${daysCount} 天</div>
+              <div>📊 日均 ${avgPerDay} 题</div>
             </div>
           </div>
         </div>
       `;
     }
     
-    // Add type-specific summary for weekly/monthly
+    // Add type-specific summary for weekly/monthly/all
+    const periodTitle = currentPeriod === 'week' ? '本周' : 
+                       currentPeriod === 'month' ? '本月' : '全部';
+    
     html += `
       <div class="stat-section">
-        <div class="stat-section-title">${currentPeriod === 'week' ? '本周' : '本月'}各题型统计</div>
+        <div class="stat-section-title">${periodTitle}各题型统计</div>
     `;
     
     // Calculate type totals for the period
@@ -793,7 +840,7 @@ function renderStats() {
           </div>`;
       });
     } else {
-      html += `<div style="text-align: center; padding: 20px; color: var(--text2); font-size: 13px;">暂无${currentPeriod === 'week' ? '本周' : '本月'}各题型数据</div>`;
+      html += `<div style="text-align: center; padding: 20px; color: var(--text2); font-size: 13px;">暂无${periodTitle}各题型数据</div>`;
     }
     
     html += '</div>';
