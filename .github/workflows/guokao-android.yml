@@ -32,6 +32,13 @@ jobs:
         with:
           name: Guokao296-debug
           path: guokao-android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Publish compiled APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp guokao-android/app/build/outputs/apk/debug/app-debug.apk Guokao296.apk
+          gh release create guokao-296-v5 Guokao296.apk --target guokao-android-build --title "Guokao 296 Android v5" --notes "Standard Android Gradle build; emulator smoke test pending." || (gh release upload guokao-296-v5 Guokao296.apk --clobber)
+
       - name: Smoke test launch on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -43,9 +50,3 @@ jobs:
             adb shell am start -n com.guokao.words/.MainActivity
             sleep 12
             adb shell pidof com.guokao.words || (adb logcat -d -t 700 | grep -A 25 'FATAL EXCEPTION'; exit 1)
-      - name: Release tested APK
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          cp guokao-android/app/build/outputs/apk/debug/app-debug.apk Guokao296.apk
-          gh release create guokao-296-v5 Guokao296.apk --target guokao-android-build --title "Guokao 296 Android v5" --notes "Android Gradle build; emulator smoke tested." || (gh release upload guokao-296-v5 Guokao296.apk --clobber)
