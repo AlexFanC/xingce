@@ -1,0 +1,50 @@
+name: Build and smoke-test Guokao Android APK
+on:
+  push:
+    branches: [guokao-android-build]
+    paths:
+      - 'guokao-android/**'
+      - '.github/workflows/guokao-android.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK 35
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Build standard debug signed APK
+        working-directory: guokao-android
+        run: gradle --no-daemon assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Guokao296-debug
+          path: guokao-android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Smoke test launch on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          arch: x86_64
+          profile: pixel_2
+          script: |
+            adb install guokao-android/app/build/outputs/apk/debug/app-debug.apk
+            adb shell am start -n com.guokao.words/.MainActivity
+            sleep 12
+            adb shell pidof com.guokao.words || (adb logcat -d -t 700 | grep -A 25 'FATAL EXCEPTION'; exit 1)
+      - name: Release tested APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp guokao-android/app/build/outputs/apk/debug/app-debug.apk Guokao296.apk
+          gh release create guokao-296-v5 Guokao296.apk --target guokao-android-build --title "Guokao 296 Android v5" --notes "Android Gradle build; emulator smoke tested." || (gh release upload guokao-296-v5 Guokao296.apk --clobber)
